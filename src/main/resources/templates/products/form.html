@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layouts/layout :: head(${mode == 'create' ? 'Thêm Product' : 'Sửa Product'})}"></head>
+<body>
+<div th:replace="~{layouts/layout :: page(~{::main})}">
+    <main>
+        <section class="page-heading">
+            <p class="eyebrow">PRODUCT FORM</p>
+            <h1 th:text="${mode == 'create' ? 'Thêm Product' : 'Sửa Product'}"></h1>
+            <p>Ảnh hợp lệ sẽ được tải lên Cloudinary; giới hạn request là 20MB.</p>
+        </section>
+
+        <form class="card form-card" th:object="${productDTO}"
+              th:action="${mode == 'create'} ? @{/products/create} : @{/products/edit/{id}(id=${productDTO.id})}"
+              method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+            <input type="hidden" th:field="*{id}">
+
+            <div th:if="${#fields.hasGlobalErrors()}" class="alert error">
+                <p th:each="item : ${#fields.globalErrors()}" th:text="${item}"></p>
+            </div>
+
+            <label for="name">Tên sản phẩm</label>
+            <input id="name" th:field="*{name}">
+            <small class="error-text" th:errors="*{name}"></small>
+
+            <label for="description">Mô tả</label>
+            <textarea id="description" th:field="*{description}" rows="5"></textarea>
+
+            <label for="price">Giá</label>
+            <input id="price" type="number" step="0.01" min="0" th:field="*{price}">
+            <small class="error-text" th:errors="*{price}"></small>
+
+            <label for="image">Ảnh sản phẩm</label>
+            <input id="image" type="file" name="image" accept="image/*">
+            <p class="field-note">Định dạng ảnh hợp lệ, dung lượng tối đa 10MB.</p>
+
+            <img th:if="${productDTO.imageUrl != null and !#strings.isEmpty(productDTO.imageUrl)}"
+                 th:src="${#strings.substringBefore(productDTO.imageUrl, '|')}" class="preview" alt="Ảnh hiện tại">
+
+            <div class="form-actions">
+                <button class="button" type="submit">Lưu Product</button>
+                <a class="button secondary" th:href="@{/products}">Hủy</a>
+            </div>
+        </form>
+    </main>
+</div>
+</body>
+</html>

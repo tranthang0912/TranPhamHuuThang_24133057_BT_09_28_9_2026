@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layouts/layout :: head('Đăng ký')}"></head>
+<body>
+<div class="auth-page">
+    <section class="auth-card">
+        <a class="auth-brand" th:href="@{/}"><span class="brand-mark">HT</span> HUUTHANG SHOP</a>
+        <p class="eyebrow">TÀI KHOẢN MỚI</p>
+        <h1>Đăng ký</h1>
+        <p class="auth-description">OTP xác nhận sẽ được gửi tới email của bạn.</p>
+
+        <form th:action="@{/register}" th:object="${registerDTO}" method="post">
+            <div th:if="${#fields.hasGlobalErrors()}" class="alert error">
+                <p th:each="item : ${#fields.globalErrors()}" th:text="${item}"></p>
+            </div>
+
+            <label for="username">Username</label>
+            <input id="username" th:field="*{username}" autocomplete="username">
+            <small class="error-text" th:errors="*{username}"></small>
+
+            <label for="email">Email</label>
+            <input id="email" type="email" th:field="*{email}" autocomplete="email">
+            <small class="error-text" th:errors="*{email}"></small>
+
+            <label for="fullName">Họ tên</label>
+            <input id="fullName" th:field="*{fullName}" autocomplete="name">
+            <small class="error-text" th:errors="*{fullName}"></small>
+
+            <div class="form-grid two-columns">
+                <div>
+                    <label for="password">Mật khẩu</label>
+                    <input id="password" type="password" th:field="*{password}" autocomplete="new-password">
+                    <small class="error-text" th:errors="*{password}"></small>
+                </div>
+                <div>
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <input id="confirmPassword" type="password" th:field="*{confirmPassword}" autocomplete="new-password">
+                    <small class="error-text" th:errors="*{confirmPassword}"></small>
+                </div>
+            </div>
+
+            <button class="button full" type="submit">Đăng ký và nhận OTP</button>
+        </form>
+        <div class="auth-links single"><a th:href="@{/login}">Đã có tài khoản? Đăng nhập</a></div>
+    </section>
+</div>
+</body>
+</html>

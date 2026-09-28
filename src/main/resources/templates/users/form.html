@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layouts/layout :: head(${mode == 'create' ? 'Thêm User' : 'Sửa User'})}"></head>
+<body>
+<div th:replace="~{layouts/layout :: page(~{::main})}">
+    <main>
+        <section class="page-heading">
+            <p class="eyebrow">USER FORM</p>
+            <h1 th:text="${mode == 'create' ? 'Thêm User' : 'Sửa User'}"></h1>
+            <p>Các trường được kiểm tra bằng Jakarta Validation trước khi lưu vào SQL Server.</p>
+        </section>
+
+        <form class="card form-card" th:object="${userDTO}" method="post"
+              th:action="${mode == 'create'} ? @{/users/create} : @{/users/edit/{id}(id=${userDTO.id})}">
+            <div th:if="${#fields.hasGlobalErrors()}" class="alert error">
+                <p th:each="item : ${#fields.globalErrors()}" th:text="${item}"></p>
+            </div>
+
+            <div class="form-grid two-columns">
+                <div>
+                    <label for="username">Username</label>
+                    <input id="username" th:field="*{username}">
+                    <small class="error-text" th:errors="*{username}"></small>
+                </div>
+                <div>
+                    <label for="email">Email</label>
+                    <input id="email" type="email" th:field="*{email}">
+                    <small class="error-text" th:errors="*{email}"></small>
+                </div>
+            </div>
+
+            <label for="fullName">Họ tên</label>
+            <input id="fullName" th:field="*{fullName}">
+            <small class="error-text" th:errors="*{fullName}"></small>
+
+            <div th:if="${mode == 'create'}">
+                <label for="password">Mật khẩu ban đầu</label>
+                <input id="password" type="password" th:field="*{password}" minlength="6" autocomplete="new-password" required>
+                <small class="error-text" th:errors="*{password}"></small>
+                <p class="field-note">Mật khẩu được BCrypt trước khi lưu và không hiển thị lại.</p>
+            </div>
+
+            <div class="form-grid two-columns">
+                <div>
+                    <label for="roleName">Role</label>
+                    <select id="roleName" th:field="*{roleName}">
+                        <option value="ROLE_USER">USER</option>
+                        <option value="ROLE_ADMIN">ADMIN</option>
+                    </select>
+                </div>
+                <label class="checkbox-row">
+                    <input type="checkbox" th:field="*{enabled}">
+                    <span>Cho phép tài khoản đăng nhập</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button class="button" type="submit">Lưu User</button>
+                <a class="button secondary" th:href="@{/users}">Hủy</a>
+            </div>
+        </form>
+    </main>
+</div>
+</body>
+</html>

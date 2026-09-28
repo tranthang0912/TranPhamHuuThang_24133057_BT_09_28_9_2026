@@ -1,48 +1,36 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <body>
-<header th:fragment="header" class="site-header">
-    <nav class="nav-shell" aria-label="Điều hướng chính">
-        <a class="site-brand" th:href="@{/}" aria-label="Trang chủ HUUTHANG SHOP">
-            <span class="brand-mark brand-mark-small">HT</span>
-            <span class="brand-copy">
-                <strong>HUUTHANG</strong>
-                <small>SECURE PORTAL</small>
-            </span>
-        </a>
+<header th:fragment="header" class="header">
+    <a th:href="@{/}" class="brand">
+        <span class="brand-mark">HT</span>
+        <span>HUUTHANG SHOP</span>
+    </a>
 
-        <div class="user-nav" th:if="${#authorization.expression('isAuthenticated()')}">
-            <img class="avatar"
-                 th:src="${#authentication.principal.images != null
-                           and !#strings.isEmpty(#authentication.principal.images)
-                           ? #authentication.principal.images
-                           : '/avatar-default.svg'}"
-                 alt="Ảnh đại diện">
-
-            <div class="user-copy">
-                <strong th:text="${#authentication.principal.fullName}">Nguyễn Văn A</strong>
-                <span th:text="${#authentication.principal.email}">user01@gmail.com</span>
-            </div>
-
-            <div class="user-meta" aria-label="Thông tin tài khoản">
-                <span class="meta-chip" th:text="${'@' + #authentication.principal.username}">@user01</span>
-                <span class="meta-chip role-chip" th:text="${#authentication.principal.role}">ROLE_USER</span>
-            </div>
-
-            <span class="nav-divider" aria-hidden="true"></span>
-
-            <form th:action="@{/logout}" method="post">
-                <button class="logout-button" type="submit">
-                    <span>Đăng xuất</span>
-                    <span aria-hidden="true">↗</span>
-                </button>
-            </form>
-        </div>
-
-        <a class="header-login" th:unless="${#authorization.expression('isAuthenticated()')}" th:href="@{/login}">
-            Đăng nhập <span aria-hidden="true">→</span>
-        </a>
+    <nav class="main-nav" aria-label="Điều hướng chính">
+        <a th:href="@{/}">Dashboard</a>
+        <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/products}">Products</a>
+        <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/users}">Users</a>
     </nav>
+
+    <div class="account" th:if="${#authorization.expression('isAuthenticated()')}">
+        <img class="avatar"
+             th:src="${#authentication.principal.images != null and !#strings.isEmpty(#authentication.principal.images) ? #authentication.principal.images : '/avatar-default.svg'}"
+             alt="Ảnh đại diện">
+        <span class="account-copy">
+            <strong th:text="${#authentication.principal.fullName}">Người dùng</strong>
+            <small th:text="${#authentication.name}">username</small>
+        </span>
+        <span class="role-badge" th:text="${#authentication.principal.role}">ROLE_USER</span>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="link-button">Đăng xuất</button>
+        </form>
+    </div>
+
+    <div class="guest-actions" th:unless="${#authorization.expression('isAuthenticated()')}">
+        <a class="button secondary" th:href="@{/register}">Đăng ký</a>
+        <a class="button" th:href="@{/login}">Đăng nhập</a>
+    </div>
 </header>
 </body>
 </html>

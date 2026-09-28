@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layouts/layout :: head('Lỗi')}"></head>
+<body>
+<div class="auth-page">
+    <div class="auth-card compact-card">
+        <span class="auth-symbol error-symbol">!</span>
+        <h1>Có lỗi xảy ra</h1>
+        <p th:text="${message ?: 'Không thể xử lý yêu cầu hiện tại.'}">Không thể xử lý yêu cầu.</p>
+        <a class="button full" th:href="@{/}">Về trang chủ</a>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layouts/layout :: head('Quản lý Products')}"></head>
+<body>
+<div th:replace="~{layouts/layout :: page(~{::main})}">
+    <main>
+        <section class="page-heading inline-heading">
+            <div>
+                <p class="eyebrow">PRODUCT CATALOG</p>
+                <h1>Quản lý Products</h1>
+                <p>Mỗi Product thuộc một User; ảnh được lưu trên Cloudinary.</p>
+            </div>
+            <a class="button" th:href="@{/products/create}">+ Thêm Product</a>
+        </section>
+
+        <div th:if="${success}" class="alert success" th:text="${success}"></div>
+
+        <section class="card table-card">
+            <div class="toolbar">
+                <form th:action="@{/products}" method="get">
+                    <input name="keyword" th:value="${keyword}" placeholder="Tên sản phẩm, mô tả...">
+                    <input type="hidden" name="size" th:value="${size}">
+                    <button class="button" type="submit">Tìm kiếm</button>
+                </form>
+            </div>
+
+            <table>
+                <thead><tr><th>ID</th><th>Ảnh</th><th>Tên</th><th>Giá</th><th>User</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                <tr th:each="product : ${products.content}">
+                    <td th:text="${product.id}"></td>
+                    <td>
+                        <img th:if="${product.imageUrl != null and !#strings.isEmpty(product.imageUrl)}"
+                             th:src="${#strings.substringBefore(product.imageUrl, '|')}" class="thumb" alt="Ảnh sản phẩm">
+                        <span th:unless="${product.imageUrl != null and !#strings.isEmpty(product.imageUrl)}" class="no-image">No image</span>
+                    </td>
+                    <td><strong th:text="${product.name}"></strong></td>
+                    <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')}"></td>
+                    <td th:text="${product.username}"></td>
+                    <td class="actions"
+                        th:if="${#authorization.expression('hasRole(''ADMIN'')') or product.userId == #authentication.principal.id}">
+                        <a class="table-link" th:href="@{/products/edit/{id}(id=${product.id})}">Sửa</a>
+                        <form th:action="@{/products/delete/{id}(id=${product.id})}" method="post"
+                              onsubmit="return confirm('Xóa Product này?')">
+                            <button class="danger-link" type="submit">Xóa</button>
+                        </form>
+                    </td>
+                    <td th:unless="${#authorization.expression('hasRole(''ADMIN'')') or product.userId == #authentication.principal.id}">
+                        <span class="muted">Chỉ xem</span>
+                    </td>
+                </tr>
+                <tr th:if="${products.empty}"><td colspan="6" class="empty-state">Không có dữ liệu.</td></tr>
+                </tbody>
+            </table>
+
+            <nav class="pagination" th:if="${products.totalPages > 0}" aria-label="Phân trang Products">
+                <a th:if="${products.hasPrevious()}" th:href="@{/products(page=${products.number - 1},size=${size},keyword=${keyword})}">Trước</a>
+                <a th:each="index : ${#numbers.sequence(0, products.totalPages - 1)}"
+                   th:classappend="${index == products.number ? 'active' : ''}"
+                   th:href="@{/products(page=${index},size=${size},keyword=${keyword})}"
+                   th:text="${index + 1}"></a>
+                <a th:if="${products.hasNext()}" th:href="@{/products(page=${products.number + 1},size=${size},keyword=${keyword})}">Sau</a>
+            </nav>
+        </section>
+    </main>
+</div>
+</body>
+</html>

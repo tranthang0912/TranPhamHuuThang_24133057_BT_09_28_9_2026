@@ -1,119 +1,56 @@
 <!DOCTYPE html>
-<html lang="vi"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout}">
-<head>
-    <title>Trang chủ</title>
-</head>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layouts/layout :: head('Dashboard')}"></head>
 <body>
-<main class="page-shell" layout:fragment="content">
-    <section class="hero-grid">
-        <article class="welcome-card">
-            <div class="status-pill">
-                <span class="status-dot" aria-hidden="true"></span>
-                Phiên đăng nhập đang hoạt động
-            </div>
-
-            <p class="eyebrow">SPRING SECURITY 7</p>
-            <h1>
-                Xin chào,
-                <span th:text="${#authentication.principal.fullName}">Người dùng</span>!
-            </h1>
-            <p class="hero-description">
-                Bạn đã đăng nhập thành công vào HUUTHANG SHOP. Thông tin tài khoản
-                được xác thực trực tiếp từ SQL Server và bảo vệ bởi Spring Security.
-            </p>
-
-            <a class="text-link" href="#account-details">
-                Xem thông tin tài khoản <span aria-hidden="true">↓</span>
-            </a>
-
-            <div class="decorative-orb orb-one" aria-hidden="true"></div>
-            <div class="decorative-orb orb-two" aria-hidden="true"></div>
-        </article>
-
-        <aside class="profile-card" aria-label="Hồ sơ đăng nhập">
-            <div class="profile-topline">
-                <span>HỒ SƠ CỦA BẠN</span>
-                <span class="verified-badge">✓ Đã xác thực</span>
-            </div>
-
-            <div class="profile-identity">
-                <div class="profile-avatar-wrap">
-                    <img class="profile-avatar"
-                         th:src="${#authentication.principal.images != null
-                                   and !#strings.isEmpty(#authentication.principal.images)
-                                   ? #authentication.principal.images
-                                   : '/avatar-default.svg'}"
-                         alt="Ảnh đại diện người dùng">
-                    <span class="online-indicator" title="Đang hoạt động"></span>
-                </div>
-                <div>
-                    <h2 th:text="${#authentication.principal.fullName}">Nguyễn Văn A</h2>
-                    <p th:text="${#authentication.principal.email}">user01@gmail.com</p>
-                </div>
-            </div>
-
-            <div class="profile-role">
-                <span>Quyền truy cập</span>
-                <strong th:text="${#authentication.principal.role}">ROLE_USER</strong>
-            </div>
-        </aside>
-    </section>
-
-    <section class="content-section" id="account-details">
-        <div class="section-heading">
+<div th:replace="~{layouts/layout :: page(~{::main})}">
+    <main>
+        <section class="page-heading">
             <div>
-                <p class="eyebrow">THÔNG TIN TÀI KHOẢN</p>
-                <h2>Chi tiết phiên đăng nhập</h2>
+                <p class="eyebrow">TỔNG QUAN HỆ THỐNG</p>
+                <h1>Dashboard</h1>
+                <p>Quản lý người dùng và sản phẩm trên một giao diện bảo mật tập trung.</p>
             </div>
-            <p>Dữ liệu được cung cấp bởi CustomUserDetails.</p>
-        </div>
+        </section>
 
-        <div class="info-grid">
-            <article class="info-card">
-                <span class="info-icon info-icon-blue" aria-hidden="true">U</span>
-                <div>
-                    <span class="info-label">Username</span>
-                    <strong th:text="${#authentication.principal.username}">user01</strong>
-                </div>
+        <div th:if="${success}" class="alert success" th:text="${success}"></div>
+
+        <section class="cards">
+            <article class="card metric-card">
+                <span class="metric-icon">U</span>
+                <div><h3>Tổng người dùng</h3><strong th:text="${userCount}">0</strong></div>
             </article>
-
-            <article class="info-card">
-                <span class="info-icon info-icon-violet" aria-hidden="true">@</span>
-                <div>
-                    <span class="info-label">Địa chỉ email</span>
-                    <strong th:text="${#authentication.principal.email}">user01@gmail.com</strong>
-                </div>
+            <article class="card metric-card">
+                <span class="metric-icon violet">P</span>
+                <div><h3>Tổng sản phẩm</h3><strong th:text="${productCount}">0</strong></div>
             </article>
+        </section>
 
-            <article class="info-card">
-                <span class="info-icon info-icon-emerald" aria-hidden="true">✓</span>
-                <div>
-                    <span class="info-label">Trạng thái</span>
-                    <strong>Đang hoạt động</strong>
-                </div>
-            </article>
-        </div>
-    </section>
+        <section class="card welcome-panel" th:if="${#authorization.expression('isAuthenticated()')}">
+            <div>
+                <p class="eyebrow">PHIÊN ĐĂNG NHẬP AN TOÀN</p>
+                <h2>Xin chào, <span th:text="${#authentication.principal.fullName}">Người dùng</span></h2>
+                <p>Tài khoản đã được xác thực bằng Spring Security Session và phân quyền theo Role.</p>
+            </div>
+            <div class="quick-links">
+                <a class="button" th:href="@{/products}">Quản lý Products</a>
+                <a class="button secondary"
+                   th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+                   th:href="@{/users}">Quản lý Users</a>
+            </div>
+        </section>
 
-    <section class="security-panel">
-        <div class="security-icon" aria-hidden="true">S</div>
-        <div>
-            <p class="eyebrow">BẢO MẬT HỆ THỐNG</p>
-            <h2>Tài khoản của bạn đang được bảo vệ</h2>
-            <p>
-                Mật khẩu được mã hóa bằng BCrypt, phiên đăng nhập được quản lý bởi
-                Spring Security và quyền truy cập được kiểm soát theo vai trò.
-            </p>
-        </div>
-        <div class="security-list">
-            <span><i aria-hidden="true"></i> BCrypt Password</span>
-            <span><i aria-hidden="true"></i> Session Protection</span>
-            <span><i aria-hidden="true"></i> Role Authorization</span>
-        </div>
-    </section>
-</main>
+        <section class="card welcome-panel" th:unless="${#authorization.expression('isAuthenticated()')}">
+            <div>
+                <p class="eyebrow">BẮT ĐẦU</p>
+                <h2>Đăng nhập để quản lý sản phẩm</h2>
+                <p>Bạn có thể tạo tài khoản mới và xác nhận bằng OTP được gửi qua email.</p>
+            </div>
+            <div class="quick-links">
+                <a class="button" th:href="@{/login}">Đăng nhập</a>
+                <a class="button secondary" th:href="@{/register}">Tạo tài khoản</a>
+            </div>
+        </section>
+    </main>
+</div>
 </body>
 </html>

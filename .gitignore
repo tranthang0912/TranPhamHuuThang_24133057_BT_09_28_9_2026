@@ -1,0 +1,16 @@
+target/
+.idea/
+.vscode/
+*.iml
+
+# Khong commit bat ky file moi truong nao co the chua mat khau.
+.env
+.env.*
+
+# Chi commit cac file mau, tuyet doi khong dat mat khau that trong cac file nay.
+!.env.example
+!.env.*.example
+
+data/
+tmp/
+*.log

@@ -9,7 +9,6 @@ target/
 
 # Chi commit cac file mau, tuyet doi khong dat mat khau that trong cac file nay.
 !.env.example
-!.env.*.example
 
 data/
 tmp/
